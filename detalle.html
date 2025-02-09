@@ -5,35 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Integrante</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilos personalizados */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: white;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+        .btn-danger, .btn-secondary {
+            font-weight: 600;
+        }
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        /* Estilos para la tabla de items */
+        .item-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .item-row .col-item {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .item-row .col-cost {
+            width: 100px;
+            margin-right: 10px;
+        }
+        .item-row .col-remove {
+            width: 50px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .button-group .btn {
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6">
-                <h1 class="text-center">Detalle de Integrante</h1>
-                <form id="detalleForm">
-                    <div class="mb-3">
-                        <label for="nombreIntegrante" class="form-label">Nombre del Integrante</label>
-                        <input type="text" class="form-control" id="nombreIntegrante" placeholder="Ingrese el nombre">
-                    </div>
-                    <div id="itemsContainer">
-                        <!-- Campos para items y sus costos se cargarán aquí -->
-                    </div>
-                    <div class="d-grid mb-3">
-                        <button type="button" class="btn btn-secondary" onclick="agregarItem()">Agregar Item</button>
-                    </div>
-                    <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                    </div>
-                    <div class="d-grid mb-3">
-                        <button type="button" class="btn btn-danger" onclick="window.location.href='table.html'">Atrás</button>
-                    </div>
-                </form>
+                <div class="card">
+                    <h1 class="text-center mb-4">Detalle de Integrante</h1>
+                    <form id="detalleForm">
+                        <div class="mb-3">
+                            <label for="nombreIntegrante" class="form-label fw-bold">Nombre del Integrante</label>
+                            <input type="text" class="form-control" id="nombreIntegrante" placeholder="Ingrese el nombre">
+                        </div>
+                        <div id="itemsContainer">
+                            <!-- Campos para items y sus costos se cargarán aquí -->
+                        </div>
+                        <div class="d-grid mb-3">
+                            <button type="button" class="btn btn-secondary" onclick="agregarItem()">
+                                <i class="fas fa-plus me-2"></i>Agregar Item
+                            </button>
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-danger" onclick="window.location.href='table.html'">
+                                <i class="fas fa-arrow-left me-2"></i>Atrás
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+    <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
+        document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const integrante = urlParams.get('integrante');
 
@@ -46,84 +120,27 @@
             // Cargar items del integrante
             const items = JSON.parse(localStorage.getItem(`itemsIntegrante-${integrante}`)) || [];
             items.forEach(item => agregarItem(item));
-
-            function agregarItem(item = { nombre: '', costo: 0 }) {
-                const itemsContainer = document.getElementById('itemsContainer');
-                const itemRow = document.createElement('div');
-                itemRow.className = 'mb-3 row';
-                
-                const itemCol = document.createElement('div');
-                itemCol.className = 'col-6';
-                const itemInput = document.createElement('input');
-                itemInput.type = 'text';
-                itemInput.className = 'form-control';
-                itemInput.placeholder = 'Item';
-                itemInput.value = item.nombre;
-                itemCol.appendChild(itemInput);
-                
-                const costoCol = document.createElement('div');
-                costoCol.className = 'col-4';
-                const costoInput = document.createElement('input');
-                costoInput.type = 'number';
-                costoInput.className = 'form-control';
-                costoInput.placeholder = 'Costo';
-                costoInput.value = item.costo;
-                costoCol.appendChild(costoInput);
-
-                const eliminarCol = document.createElement('div');
-                eliminarCol.className = 'col-2';
-                const eliminarBtn = document.createElement('button');
-                eliminarBtn.type = 'button';
-                eliminarBtn.className = 'btn btn-danger';
-                eliminarBtn.textContent = 'Eliminar';
-                eliminarBtn.onclick = () => itemRow.remove();
-                eliminarCol.appendChild(eliminarBtn);
-
-                itemRow.appendChild(itemCol);
-                itemRow.appendChild(costoCol);
-                itemRow.appendChild(eliminarCol);
-                itemsContainer.appendChild(itemRow);
-            }
-
-            document.getElementById('detalleForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-                const nombreIntegrante = document.getElementById('nombreIntegrante').value;
-                localStorage.setItem(`nombreIntegrante-${integrante}`, nombreIntegrante);
-
-                let totalConsumo = 0;
-                const items = [];
-                const rows = document.querySelectorAll('#itemsContainer .row');
-                rows.forEach(row => {
-                    const nombreItem = row.querySelector('input[type="text"]').value;
-                    const costoItem = row.querySelector('input[type="number"]').value;
-                    totalConsumo += parseFloat(costoItem) || 0;
-                    items.push({ nombre: nombreItem, costo: parseFloat(costoItem) || 0 });
-                });
-                localStorage.setItem(`itemsIntegrante-${integrante}`, JSON.stringify(items));
-                localStorage.setItem(`consumoIntegrante-${integrante}`, totalConsumo);
-
-                alert('Detalles guardados.');
-                window.location.href = 'table.html';
-            });
         });
 
         function agregarItem(item = { nombre: '', costo: 0 }) {
             const itemsContainer = document.getElementById('itemsContainer');
+
             const itemRow = document.createElement('div');
-            itemRow.className = 'mb-3 row';
-            
+            itemRow.className = 'item-row';
+
+            // Campo del Item
             const itemCol = document.createElement('div');
-            itemCol.className = 'col-6';
+            itemCol.className = 'col-item';
             const itemInput = document.createElement('input');
             itemInput.type = 'text';
             itemInput.className = 'form-control';
             itemInput.placeholder = 'Item';
             itemInput.value = item.nombre;
             itemCol.appendChild(itemInput);
-            
+
+            // Campo del Costo
             const costoCol = document.createElement('div');
-            costoCol.className = 'col-4';
+            costoCol.className = 'col-cost';
             const costoInput = document.createElement('input');
             costoInput.type = 'number';
             costoInput.className = 'form-control';
@@ -131,21 +148,52 @@
             costoInput.value = item.costo;
             costoCol.appendChild(costoInput);
 
+            // Botón Eliminar
             const eliminarCol = document.createElement('div');
-            eliminarCol.className = 'col-2';
+            eliminarCol.className = 'col-remove';
             const eliminarBtn = document.createElement('button');
             eliminarBtn.type = 'button';
             eliminarBtn.className = 'btn btn-danger';
-            eliminarBtn.textContent = 'Eliminar';
+            eliminarBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
             eliminarBtn.onclick = () => itemRow.remove();
             eliminarCol.appendChild(eliminarBtn);
 
+            // Añadir los elementos al itemRow en el orden original
             itemRow.appendChild(itemCol);
             itemRow.appendChild(costoCol);
             itemRow.appendChild(eliminarCol);
+
             itemsContainer.appendChild(itemRow);
         }
+
+        document.getElementById('detalleForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const integrante = urlParams.get('integrante');
+
+            const nombreIntegrante = document.getElementById('nombreIntegrante').value;
+            localStorage.setItem(`nombreIntegrante-${integrante}`, nombreIntegrante);
+
+            let totalConsumo = 0;
+            const items = [];
+            const rows = document.querySelectorAll('#itemsContainer .item-row');
+            rows.forEach(row => {
+                const nombreItem = row.querySelector('.col-item input').value;
+                const costoItem = row.querySelector('.col-cost input').value;
+                totalConsumo += parseFloat(costoItem) || 0;
+                items.push({ nombre: nombreItem, costo: parseFloat(costoItem) || 0 });
+            });
+            localStorage.setItem(`itemsIntegrante-${integrante}`, JSON.stringify(items));
+            localStorage.setItem(`consumoIntegrante-${integrante}`, totalConsumo);
+
+            alert('Detalles guardados.');
+            window.location.href = 'table.html';
+        });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
